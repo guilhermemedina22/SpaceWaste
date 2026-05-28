@@ -43,8 +43,8 @@ def pagina_inicial():
 
 def cadastro_detrito(lista_detritos):
     print('aqui você pode criar seu próprio lixo espacial')
-    dnome = input('nome do detrito')
-    dtamanho = float(input('tamanho do detrito em metros:'))
+    dnome = input('nome do detrito: ')
+    dtamanho = float(input('tamanho do detrito em metros: '))
     dpeso = float(input('peso do detrito em quilos: '))
     dalt = float(input('altitude do detrito na atimosfera em quilometros: '))
 
