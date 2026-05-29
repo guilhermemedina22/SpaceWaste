@@ -1,3 +1,4 @@
+from detrito_pais import lixo_pais
 ##funções de validação
 
 def validar_email(email):
@@ -74,9 +75,7 @@ def relatorio(lista_detritos):
 def ranques():
     print('em desenvolvimento')   
 
-def lixo_pais():
-    print('aqui você pode ver quantos detritos em média estão orbitando cada país \n exemplo: Brasil') 
-    
+
 
 def executar_app(usuario):
     nome = usuario['nome']
