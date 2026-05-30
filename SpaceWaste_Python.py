@@ -1,4 +1,4 @@
-from detrito_pais import lixo_pais
+from detrito_pais import lixo_pais, DETRITOS_POR_PAIS
 ##funções de validação
 
 def validar_email(email):
@@ -75,6 +75,39 @@ def relatorio(lista_detritos):
 def ranques():
     print('em desenvolvimento')   
 
+def ranques(lista_detritos):
+    print('\n--- 🏆 Rankings de Detritos ---')
+
+    # ── Ranking 1: Tamanho × Peso ──────────────────────────────────────────
+    print('\n  [Ranking 1] Top 5 — Pontuação (Tamanho × Peso)')
+
+    if not lista_detritos:
+        print('  Nenhum detrito cadastrado ainda.')
+    else:
+        ranking_tp = sorted(
+            lista_detritos,
+            key=lambda d: d['tamanho'] * d['peso'],
+            reverse=True
+        )[:5]
+
+        for pos, d in enumerate(ranking_tp, start=1):
+            pontuacao = d['tamanho'] * d['peso']
+            print(f'  {pos}º {d["nome"]:20s} — {pontuacao:>10.2f} pts'
+                  f'  (tam: {d["tamanho"]} m | peso: {d["peso"]} kg)')
+
+    # ── Ranking 2: Países ──────────────────────────────────────────────────
+    print('\n  [Ranking 2] Top 5 — Países com mais lixo espacial')
+
+    ranking_paises = sorted(
+        DETRITOS_POR_PAIS.items(),
+        key=lambda item: item[1]['estimativa'],
+        reverse=True
+    )[:5]
+
+    for pos, (nome_pais, dados) in enumerate(ranking_paises, start=1):
+        sigla  = dados['sigla']
+        estim  = dados['estimativa']
+        print(f'  {pos}º {nome_pais.title():25s} ({sigla}) — ~{estim:,} objetos rastreáveis')
 
 
 def executar_app(usuario):
@@ -92,7 +125,7 @@ def executar_app(usuario):
             case '3':
                 relatorio(lista_detritos)
             case '4':
-                ranques()
+                ranques(lista_detritos)
             case '5':
                 lixo_pais()
             case '6':
