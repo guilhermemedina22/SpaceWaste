@@ -1,4 +1,6 @@
 from detrito_pais import lixo_pais, DETRITOS_POR_PAIS
+    
+import time
 ##funções de validação
 
 def validar_email(email):
@@ -56,10 +58,60 @@ def cadastro_detrito(lista_detritos):
         'altitude': dalt,
     }
     lista_detritos.append(detrito)
-    
-def simulacao():
-    print('em desenvolvimento')
 
+def simulacao(lista_detritos):
+    if not lista_detritos:
+        print('Nenhum detrito cadastrado. Vá à opção 1 primeiro.')
+        return
+
+    print('\n--- Simulação de Reentrada Atmosférica ---')
+    for d in lista_detritos:
+        print(f'\n  Simulando: {d["nome"]}')
+        
+        if d['peso'] < 10:
+            resultado = 'Incinerado completamente na atmosfera'
+        elif d['tamanho'] < 0.5:
+            resultado = 'Fragmentado e incinerado'
+        elif d['peso'] > 1000:
+            resultado = 'Impacto no solo'
+        else:
+            resultado = 'Fragmentos pequenos caíram no oceano'
+        
+        tempo = tempo_reentrada(d['altitude'])
+        
+        etapas = [
+            (d['altitude'], 'Detrito em órbita estável...'),
+            (d['altitude'] * 0.6, 'Começando a perder altitude...'),
+            (120, 'Entrando na termosfera — fricção intensa!'),
+            (80, 'Temperatura ultrapassando 1600°C!'),
+            (50, 'Ablação em andamento...'),
+            (0, resultado),
+        ]
+
+        for alt, msg in etapas:
+            print(f'  [{alt:.0f} km] {msg}')
+            time.sleep(0.8)
+
+        print(f'\n  Tempo estimado de reentrada: {tempo}')   
+
+        print(f'  Altitude inicial : {d["altitude"]} km')
+        print(f'  Tempo de reentrada: {tempo}')  
+        print(f'  Resultado: {resultado}')
+        
+
+
+def tempo_reentrada(dalt):
+    if dalt < 300:
+        return 'menos de 1 ano'
+    elif dalt < 400:
+        return 'alguns anos'
+    elif dalt < 600:
+        return 'décadas'
+    elif dalt < 1000:
+        return 'séculos'
+    else:
+        return 'milênios (praticamente permanente)'
+    
 def relatorio(lista_detritos):
     print('\n--- Relatório de Detritos ---')
 
@@ -121,7 +173,7 @@ def executar_app(usuario):
             case '1':
                 cadastro_detrito(lista_detritos)
             case '2':
-                simulacao()
+                simulacao(lista_detritos)
             case '3':
                 relatorio(lista_detritos)
             case '4':
