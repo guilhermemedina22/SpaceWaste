@@ -1,29 +1,62 @@
 from detrito_pais import lixo_pais, DETRITOS_POR_PAIS
-    
+
 import time
-##funções de validação
+
+# ============================================================
+# FUNÇÕES DE VALIDAÇÃO
+# ============================================================
 
 def validar_email(email):
+    """
+    Valida se o email possui '@' e '.'.
+    Parâmetro: email (str) — email digitado pelo usuário.
+    Retorno: bool — True se válido, False caso contrário.
+    """
     return '@' in email and '.' in email
 
 
-##entrada de valores
-def entrada():
-    print('\nolá seja bem vindo ao SpaceWaste')
-    print('informe suas credencias para continuar.\n')
+def validar_numero_positivo(prompt):
+    """
+    Solicita um número positivo ao usuário, repetindo até receber entrada válida.
+    Parâmetro: prompt (str) — mensagem exibida ao usuário.
+    Retorno: float — número positivo informado.
+    """
+    while True:
+        try:
+            valor = float(input(prompt))
+            if valor <= 0:
+                print('  ⚠ O valor deve ser maior que zero. Tente novamente.')
+            else:
+                return valor
+        except ValueError:
+            print('  ⚠ Entrada inválida. Digite um número.')
 
-    nome = input('informe seu nome: ').strip()
+
+# ============================================================
+# ENTRADA / LOGIN
+# ============================================================
+
+def entrada():
+    """
+    Realiza o login do usuário solicitando nome e email.
+    Sem parâmetros.
+    Retorno: dict — dicionário com 'nome' e 'email' do usuário.
+    """
+    print('\nOlá! Seja bem-vindo ao SpaceWaste 🚀')
+    print('Informe suas credenciais para continuar.\n')
+
+    nome = input('Informe seu nome: ').strip()
     while not nome:
-        print('para continuar informe seu nome')
-        nome = input('informe seu nome: ').strip()
+        print('  ⚠ Para continuar, informe seu nome.')
+        nome = input('Informe seu nome: ').strip()
 
     while True:
-        email = input('informe seu email: ') .strip()
+        email = input('Informe seu email: ').strip()
         if validar_email(email):
             break
-        print('Email invalido, veerifique se ele possui @ ou . ')
+        print('  ⚠ Email inválido. Verifique se possui "@" e ".".')
 
-    print(f'login finalizado, seja bem vindo ao SpaceWaste {nome}')
+    print(f'\nLogin finalizado! Seja bem-vindo ao SpaceWaste, {nome}! 🌌')
 
     usuario = {
         'nome': nome,
@@ -32,75 +65,72 @@ def entrada():
     return usuario
 
 
+# ============================================================
+# MENU PRINCIPAL
+# ============================================================
 
 def pagina_inicial():
-    print('\n\n=====SpaceWaste=====')
-    print('1 - cadastro de detrito ficticio')
-    print('2 - simulação de reentrada na atmosfera')
-    print('3 - Relatório estatistico')
-    print('4 - ranque de detritos')
-    print('5 - Lixo espacial no país __')
-    print('6 - sair do aplicativo')
-    return input('ação desejada: ').strip()
-## opções do menu
+    """
+    Exibe o menu principal e retorna a opção escolhida.
+    Sem parâmetros.
+    Retorno: str — opção digitada pelo usuário.
+    """
+    print('\n' + '=' * 40)
+    print('         🛸  S P A C E W A S T E  🛸')
+    print('=' * 40)
+    print('  1 - Cadastrar detrito espacial')
+    print('  2 - Simulação de reentrada atmosférica')
+    print('  3 - Relatório de detritos cadastrados')
+    print('  4 - Ranking de detritos e países')
+    print('  5 - Lixo espacial por país')
+    print('  6 - Sobre o SpaceWaste')
+    print('  7 - Sair do aplicativo')
+    print('=' * 40)
+    return input('  Ação desejada: ').strip()
+
+
+# ============================================================
+# OPÇÃO 1 — CADASTRO DE DETRITO
+# ============================================================
 
 def cadastro_detrito(lista_detritos):
-    print('aqui você pode criar seu próprio lixo espacial')
-    dnome = input('nome do detrito: ')
-    dtamanho = float(input('tamanho do detrito em metros: '))
-    dpeso = float(input('peso do detrito em quilos: '))
-    dalt = float(input('altitude do detrito na atimosfera em quilometros: '))
+    """
+    Permite ao usuário cadastrar um detrito espacial fictício.
+    Parâmetro: lista_detritos (list) — lista onde o detrito será adicionado.
+    Sem retorno — modifica a lista diretamente.
+    """
+    print('\n--- Cadastro de Detrito Espacial ---')
+    print('Aqui você pode criar seu próprio lixo espacial.\n')
+
+    dnome = input('  Nome do detrito: ').strip()
+    while not dnome:
+        print('  ⚠ O nome não pode ser vazio.')
+        dnome = input('  Nome do detrito: ').strip()
+
+    dtamanho = validar_numero_positivo('  Tamanho do detrito em metros: ')
+    dpeso    = validar_numero_positivo('  Peso do detrito em quilos: ')
+    dalt     = validar_numero_positivo('  Altitude do detrito na atmosfera em km: ')
 
     detrito = {
-        'nome': dnome,
-        'tamanho': dtamanho,
-        'peso': dpeso,
+        'nome':     dnome,
+        'tamanho':  dtamanho,
+        'peso':     dpeso,
         'altitude': dalt,
     }
     lista_detritos.append(detrito)
+    print(f'\n  ✅ Detrito "{dnome}" cadastrado com sucesso!')
 
-def simulacao(lista_detritos):
-    if not lista_detritos:
-        print('Nenhum detrito cadastrado. Vá à opção 1 primeiro.')
-        return
 
-    print('\n--- Simulação de Reentrada Atmosférica ---')
-    for d in lista_detritos:
-        print(f'\n  Simulando: {d["nome"]}')
-        
-        if d['peso'] < 10:
-            resultado = 'Incinerado completamente na atmosfera'
-        elif d['tamanho'] < 0.5:
-            resultado = 'Fragmentado e incinerado'
-        elif d['peso'] > 1000:
-            resultado = 'Impacto no solo'
-        else:
-            resultado = 'Fragmentos pequenos caíram no oceano'
-        
-        tempo = tempo_reentrada(d['altitude'])
-        
-        etapas = [
-            (d['altitude'], 'Detrito em órbita estável...'),
-            (d['altitude'] * 0.6, 'Começando a perder altitude...'),
-            (120, 'Entrando na termosfera — fricção intensa!'),
-            (80, 'Temperatura ultrapassando 1600°C!'),
-            (50, 'Ablação em andamento...'),
-            (0, resultado),
-        ]
-
-        for alt, msg in etapas:
-            print(f'  [{alt:.0f} km] {msg}')
-            time.sleep(0.8)
-
-        print(f'\n  Tempo estimado de reentrada: {tempo}')   
-
-        print(f'  Altitude inicial : {d["altitude"]} km')
-        print(f'  Tempo de reentrada: {tempo}')  
-        print(f'  Resultado: {resultado}')
-        
-
+# ============================================================
+# OPÇÃO 2 — SIMULAÇÃO DE REENTRADA
+# ============================================================
 
 def tempo_reentrada(dalt):
+    """
+    Estima o tempo de reentrada com base na altitude.
+    Parâmetro: dalt (float) — altitude em quilômetros.
+    Retorno: str — estimativa textual do tempo de reentrada.
+    """
     if dalt < 300:
         return 'menos de 1 ano'
     elif dalt < 400:
@@ -111,23 +141,89 @@ def tempo_reentrada(dalt):
         return 'séculos'
     else:
         return 'milênios (praticamente permanente)'
-    
-def relatorio(lista_detritos):
-    print('\n--- Relatório de Detritos ---')
 
+
+def simulacao(lista_detritos):
+    """
+    Simula a reentrada atmosférica de todos os detritos cadastrados.
+    Parâmetro: lista_detritos (list) — lista de detritos cadastrados.
+    Sem retorno — exibe a simulação no terminal.
+    """
     if not lista_detritos:
-        print('Nenhum detrito cadastrado ainda.')
+        print('\n  ⚠ Nenhum detrito cadastrado. Vá à opção 1 primeiro.')
         return
 
+    print('\n--- Simulação de Reentrada Atmosférica ---')
+    for d in lista_detritos:
+        print(f'\n  🔥 Simulando: {d["nome"]}')
+
+        if d['peso'] < 10:
+            resultado = 'Incinerado completamente na atmosfera'
+        elif d['tamanho'] < 0.5:
+            resultado = 'Fragmentado e incinerado'
+        elif d['peso'] > 1000:
+            resultado = 'Impacto no solo'
+        else:
+            resultado = 'Fragmentos pequenos caíram no oceano'
+
+        tempo = tempo_reentrada(d['altitude'])
+
+        etapas = [
+            (d['altitude'],       'Detrito em órbita estável...'),
+            (d['altitude'] * 0.6, 'Começando a perder altitude...'),
+            (120,                 'Entrando na termosfera — fricção intensa!'),
+            (80,                  'Temperatura ultrapassando 1600°C!'),
+            (50,                  'Ablação em andamento...'),
+            (0,                   resultado),
+        ]
+
+        for alt, msg in etapas:
+            print(f'  [{alt:.0f} km] {msg}')
+            time.sleep(0.8)
+
+        print(f'\n  ─────────────────────────────────')
+        print(f'  Altitude inicial  : {d["altitude"]} km')
+        print(f'  Tempo de reentrada: {tempo}')
+        print(f'  Resultado         : {resultado}')
+        print(f'  ─────────────────────────────────')
+
+
+# ============================================================
+# OPÇÃO 3 — RELATÓRIO
+# ============================================================
+
+def relatorio(lista_detritos):
+    """
+    Exibe o relatório completo de todos os detritos cadastrados.
+    Parâmetro: lista_detritos (list) — lista de detritos cadastrados.
+    Sem retorno — imprime o relatório no terminal.
+    """
+    print('\n--- Relatório de Detritos Cadastrados ---')
+
+    if not lista_detritos:
+        print('  Nenhum detrito cadastrado ainda.')
+        return
+
+    print(f'  Total de detritos: {len(lista_detritos)}\n')
     for i, d in enumerate(lista_detritos, start=1):
-        print(f'\n  [{i}] {d["nome"]}')
+        print(f'  [{i}] {d["nome"]}')
         print(f'      Tamanho : {d["tamanho"]} m')
         print(f'      Peso    : {d["peso"]} kg')
         print(f'      Altitude: {d["altitude"]} km')
-def ranques():
-    print('em desenvolvimento')   
+        print()
+
+
+# ============================================================
+# OPÇÃO 4 — RANKING
+# ============================================================
 
 def ranques(lista_detritos):
+    """
+    Exibe dois rankings: Top 5 detritos por pontuação (tamanho × peso)
+    e Top 5 países com mais lixo espacial.
+    Parâmetro: lista_detritos (list) — lista de detritos cadastrados.
+    Sem retorno — imprime os rankings no terminal.
+    """
     print('\n--- 🏆 Rankings de Detritos ---')
 
     # ── Ranking 1: Tamanho × Peso ──────────────────────────────────────────
@@ -157,18 +253,44 @@ def ranques(lista_detritos):
     )[:5]
 
     for pos, (nome_pais, dados) in enumerate(ranking_paises, start=1):
-        sigla  = dados['sigla']
-        estim  = dados['estimativa']
+        sigla = dados['sigla']
+        estim = dados['estimativa']
         print(f'  {pos}º {nome_pais.title():25s} ({sigla}) — ~{estim:,} objetos rastreáveis')
 
 
+# ============================================================
+# OPÇÃO 6 — SOBRE O SPACEWASTE
+# ============================================================
+
+def sobre():
+    """
+    Exibe uma breve descrição textual do projeto SpaceWaste.
+    Sem parâmetros nem retorno.
+    """
+    print('\n--- Sobre o SpaceWaste ---')
+    print('  O SpaceWaste é um simulador de lixo espacial desenvolvido em Python.')
+    print('  O sistema permite cadastrar detritos fictícios, simular sua reentrada')
+    print('  na atmosfera terrestre e visualizar rankings e estatísticas por país.')
+    print('  O projeto aborda a problemática real dos detritos orbitais, que hoje')
+    print('  somam mais de 27.000 objetos rastreáveis em órbita ao redor da Terra.')
+
+
+# ============================================================
+# EXECUÇÃO DO APP
+# ============================================================
+
 def executar_app(usuario):
+    """
+    Controla o loop principal do aplicativo, chamando as funções do menu.
+    Parâmetro: usuario (dict) — dicionário com nome e email do usuário logado.
+    Sem retorno.
+    """
     nome = usuario['nome']
     lista_detritos = []
 
     while True:
         escolha = pagina_inicial()
-        
+
         match escolha:
             case '1':
                 cadastro_detrito(lista_detritos)
@@ -181,12 +303,20 @@ def executar_app(usuario):
             case '5':
                 lixo_pais()
             case '6':
-                print(f'até mais {nome}')
+                sobre()
+            case '7':
+                print(f'\n  Até mais, {nome}! 👋')
                 break
             case _:
-                print('\n    ⚠ Opção inválida! Escolha entre 1 e 6.')
+                print('\n  ⚠ Opção inválida! Escolha entre 1 e 7.')
+
+
+# ============================================================
+# MAIN
+# ============================================================
 
 def main():
+    """Ponto de entrada do programa."""
     usuario = entrada()
     executar_app(usuario)
 
